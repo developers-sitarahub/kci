@@ -34,8 +34,8 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${scrolled ? 'shadow-sm' : 'border-b border-gray-100'}`}>
+      <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center justify-between gap-6">
         {/* Logo + Name */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0">
           <Image
@@ -49,16 +49,16 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center space-x-10">
           {navLinks.map((link) =>
             link.children ? (
               <div key={link.label} className="relative"
                 onMouseEnter={() => setPropOpen(true)}
                 onMouseLeave={() => setPropOpen(false)}
               >
-                <button className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-[#9c7c3d] transition-colors py-2">
+                <button className="flex items-center gap-1.5 text-[15px] font-normal text-[#4a4a4a] hover:text-[#9c7c3d] transition-colors py-2">
                   {link.label}
-                  <ChevronDown size={13} className={`transition-transform duration-200 ${propOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={14} strokeWidth={1.5} className={`transition-transform duration-200 ${propOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {propOpen && (
@@ -71,7 +71,7 @@ export default function Navbar() {
                     >
                       {link.children.map((c) => (
                         <Link key={c.href} href={c.href}
-                          className="block px-4 py-3 text-sm text-gray-700 hover:bg-[#FAF8F4] hover:text-[#9c7c3d] transition-colors">
+                          className="block px-4 py-3 text-[14px] font-normal text-[#4a4a4a] hover:bg-[#FAF8F4] hover:text-[#9c7c3d] transition-colors">
                           {c.label}
                         </Link>
                       ))}
@@ -81,7 +81,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link key={link.href} href={link.href}
-                className="text-sm font-medium text-gray-700 hover:text-[#9c7c3d] transition-colors">
+                className="text-[15px] font-normal text-[#4a4a4a] hover:text-[#9c7c3d] transition-colors py-2">
                 {link.label}
               </Link>
             )
