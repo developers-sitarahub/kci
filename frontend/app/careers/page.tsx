@@ -2,21 +2,46 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState, FormEvent } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, ChevronRight, Send, Briefcase, GraduationCap } from "lucide-react";
+import { CheckCircle2, ChevronRight, Send, Briefcase, GraduationCap, Upload, FileText } from "lucide-react";
 
 export default function CareersPage() {
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', notes: '' });
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('email', formData.email);
+      data.append('phone', formData.phone);
+      data.append('notes', formData.notes);
+      if (resumeFile) {
+        data.append('resume', resumeFile);
+      }
+
+      const res = await fetch('http://localhost:8000/api/careers/', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!res.ok) throw new Error('Network response was not ok');
+      setStatus('success');
+      setFormData({ name: '', email: '', phone: '', notes: '' });
+      setResumeFile(null);
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+    }
+  };
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
   };
 
   return (
@@ -225,7 +250,7 @@ export default function CareersPage() {
 
             {/* Application Form */}
             <div className="lg:w-3/5 p-10 md:p-14">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">Name <span className="text-red-500">*</span></label>
@@ -233,6 +258,7 @@ export default function CareersPage() {
                       type="text"
                       id="name"
                       required
+                      value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#905e0e] focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                       placeholder="John Doe"
                     />
@@ -243,6 +269,7 @@ export default function CareersPage() {
                       type="email"
                       id="email"
                       required
+                      value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#905e0e] focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                       placeholder="john@example.com"
                     />
@@ -255,9 +282,46 @@ export default function CareersPage() {
                     type="tel"
                     id="phone"
                     required
+                    value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#905e0e] focus:border-transparent transition-all bg-slate-50 focus:bg-white"
                     placeholder="(123) 456-7890"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Resume (PDF) <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="resume"
+                      accept=".pdf"
+                      required
+                      onChange={e => setResumeFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="resume"
+                      className={`flex items-center justify-center w-full px-4 py-8 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
+                        resumeFile 
+                        ? 'border-[#905e0e] bg-[#905e0e]/5 text-[#905e0e]' 
+                        : 'border-slate-200 bg-slate-50 text-slate-400 hover:border-[#905e0e]/50 hover:bg-slate-100'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        {resumeFile ? (
+                          <>
+                            <FileText className="w-8 h-8" />
+                            <span className="text-sm font-medium truncate max-w-[200px]">{resumeFile.name}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8 opacity-50" />
+                            <span className="text-sm font-medium">Click to upload your resume (PDF)</span>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                  </div>
                 </div>
 
                 <div>
@@ -265,17 +329,21 @@ export default function CareersPage() {
                   <textarea
                     id="notes"
                     rows={4}
+                    value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#905e0e] focus:border-transparent transition-all bg-slate-50 focus:bg-white resize-none"
                     placeholder="Tell us about yourself and drop a link to your portfolio or LinkedIn..."
                   />
                 </div>
 
                 <button
-                  type="button"
-                  className="mt-4 flex items-center justify-center w-full px-8 py-4 bg-[#905e0e] text-white font-bold rounded-xl hover:bg-[#7a4f0a] transition-all duration-300 shadow-lg shadow-[#905e0e]/30 hover:shadow-[#905e0e]/50 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#905e0e]"
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="mt-4 flex items-center justify-center w-full px-8 py-4 bg-[#905e0e] text-white font-bold rounded-xl hover:bg-[#7a4f0a] transition-all duration-300 shadow-lg shadow-[#905e0e]/30 hover:shadow-[#905e0e]/50 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#905e0e] disabled:opacity-50 disabled:hover:translate-y-0"
                 >
-                  Send Application <Send className="w-5 h-5 ml-2" />
+                  {status === 'loading' ? 'Sending...' : 'Send Application'} <Send className="w-5 h-5 ml-2" />
                 </button>
+                {status === 'success' && <p className="text-green-600 text-sm mt-2 text-center">Application sent successfully!</p>}
+                {status === 'error' && <p className="text-red-600 text-sm mt-2 text-center">Error sending application. Please try again.</p>}
               </form>
             </div>
           </div>

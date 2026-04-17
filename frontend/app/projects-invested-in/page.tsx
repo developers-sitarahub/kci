@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, Building, Leaf, Navigation } from 'lucide-react';
 
@@ -11,82 +12,16 @@ const fadeUp: any = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1 } }),
 };
 
-const properties = [
-  {
-    title: 'Bear Creek Village – HW 6',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-2-5.png?w=672',
-    location: "Houston, TX",
-    tags: ["Retail", "Development"]
-  },
-  {
-    title: 'Fountains On The Lake',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-3-2.png?w=672',
-    location: "Stafford, TX",
-    tags: ["Mixed-Use", "Retail"]
-  },
-  {
-    title: 'Galleria Park',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-8-1.png?w=672',
-    location: "Houston, TX",
-    tags: ["Office", "Commercial"]
-  },
-  {
-    title: 'Rasha at Audubon',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-9-1.png?w=672',
-    location: "Magnolia, TX",
-    tags: ["Residential", "New Construction"]
-  },
-  {
-    title: 'Holzwarth Apartments',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-4-3.png?w=672',
-    location: "Spring, TX",
-    tags: ["Multi-Family", "Investment"]
-  },
-  {
-    title: 'Porter Land',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-5-2.png?w=672',
-    location: "Porter, TX",
-    tags: ["Land", "Development"]
-  },
-  {
-    title: 'Star Center – HW 6',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-6-2.png?w=672',
-    location: "Houston, TX",
-    tags: ["Retail Center", "Leasing"]
-  },
-  {
-    title: 'University Blvd Sugarland',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-7-2.png?w=672',
-    location: "Sugar Land, TX",
-    tags: ["Land", "Commercial"]
-  },
-  {
-    title: 'Imperial Land',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-12b.png?w=672',
-    location: "Sugar Land, TX",
-    tags: ["Land", "Development"]
-  },
-  {
-    title: 'Cypresswood Retail',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-13b-1.png?w=672',
-    location: "Spring, TX",
-    tags: ["Retail", "Gas Station"]
-  },
-  {
-    title: 'Audubon – Territory at Audubon',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2025/06/audobon-territory-at-audobon.png?w=677',
-    location: "Magnolia, TX",
-    tags: ["Land Development"]
-  },
-  {
-    title: 'Marcel Harvest Green',
-    image: 'https://kanjicapitalinvestments.com/wp-content/uploads/2025/06/marcel-harvest-green-1.png?w=677',
-    location: "Richmond, TX",
-    tags: ["Retail District", "Mixed-Use"]
-  },
-];
-
 export default function ProjectsInvestedIn() {
+  const [properties, setProperties] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/invested-projects/')
+      .then(res => res.json())
+      .then(data => setProperties(data))
+      .catch(err => console.error("Error fetching invested projects:", err));
+  }, []);
+
   return (
     <main className="flex flex-col flex-1 bg-white">
       {/* ── HERO ── */}
@@ -156,7 +91,7 @@ export default function ProjectsInvestedIn() {
               >
                 <div className="relative w-full aspect-[4/3] overflow-hidden">
                   <Image
-                    src={p.image}
+                    src={p.image || "/images/building_1.png"}
                     alt={p.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
@@ -166,7 +101,7 @@ export default function ProjectsInvestedIn() {
                   
                   {/* Tags */}
                   <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
-                    {p.tags.map(tag => (
+                    {(p.tags_list || []).map((tag: string) => (
                       <span key={tag} className="bg-white/95 text-gray-900 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm backdrop-blur-sm">
                         {tag}
                       </span>
@@ -193,7 +128,7 @@ export default function ProjectsInvestedIn() {
           className="max-w-3xl mx-auto text-center bg-[#FAF8F4] p-10 rounded-3xl border border-[#9c7c3d]/20">
           <h2 className="text-2xl md:text-3xl font-cardo font-bold text-gray-900 mb-4">Interested in Partnering With Us?</h2>
           <p className="text-gray-600 mb-8 max-w-xl mx-auto text-sm leading-relaxed">
-            We are actively seeking new investment opportunities and partnerships in the Houston metropolitan area. Let's discuss how we can build success together.
+            We are actively seeking new investment opportunities and partnerships in the Houston metropolitan area. Let&apos;s discuss how we can build success together.
           </p>
           <Link href="/contact"
             className="inline-flex items-center gap-2 bg-[#9c7c3d] text-white font-medium px-8 py-3 rounded-lg hover:bg-[#7a5f2a] transition-colors">

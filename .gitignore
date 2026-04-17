@@ -1,0 +1,32 @@
+# Root .gitignore for Kanji Capital Investments (kci)
+
+# Backend
+backend/venv/
+backend/.env
+backend/__pycache__/
+backend/*.py[cod]
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media/
+backend/node_modules/
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env*
+frontend/dev.db
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

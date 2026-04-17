@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,6 +11,27 @@ const fadeUp: any = {
 };
 
 export default function Contact() {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const res = await fetch('http://localhost:8000/api/contact/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error(error);
+      setStatus('error');
+    }
+  };
+
   return (
     <main className="flex flex-col flex-1 bg-white">
       {/* ── TITLE ── */}
@@ -41,26 +63,31 @@ export default function Contact() {
               </p>
             </div>
 
-            <form className="flex flex-col gap-4 mt-2">
+            <form className="flex flex-col gap-4 mt-2" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Name <span className="text-gray-400 font-normal">(required)</span></label>
                 <input type="text" required
+                  value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#9c7c3d]/30 focus:border-[#9c7c3d] rounded-md transition" />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Email <span className="text-gray-400 font-normal">(required)</span></label>
                 <input type="email" required
+                  value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                   className="border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#9c7c3d]/30 focus:border-[#9c7c3d] rounded-md transition" />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Message</label>
-                <textarea rows={6}
+                <label className="text-sm font-medium text-gray-700">Message <span className="text-gray-400 font-normal">(required)</span></label>
+                <textarea rows={6} required
+                  value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}
                   className="border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#9c7c3d]/30 focus:border-[#9c7c3d] rounded-md transition resize-none" />
               </div>
-              <button type="submit"
-                className="self-start bg-[#9c7c3d] text-white font-medium px-8 py-2.5 rounded-md hover:bg-[#7a5f2a] transition-colors text-sm">
-                Submit
+              <button type="submit" disabled={status === 'loading'}
+                className="self-start bg-[#9c7c3d] text-white font-medium px-8 py-2.5 rounded-md hover:bg-[#7a5f2a] transition-colors text-sm disabled:opacity-50">
+                {status === 'loading' ? 'Submitting...' : 'Submit'}
               </button>
+              {status === 'success' && <p className="text-green-600 text-sm mt-2">Message sent successfully!</p>}
+              {status === 'error' && <p className="text-red-600 text-sm mt-2">Error sending message. Please try again.</p>}
             </form>
           </motion.div>
 
