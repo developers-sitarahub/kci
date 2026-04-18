@@ -16,8 +16,12 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
 
   return (
     <div 
-      className="relative w-full h-[540px] perspective-1000 group cursor-pointer overflow-hidden rounded-2xl"
-      onClick={() => setIsFlipped(!isFlipped)}
+      className={`relative w-full h-[540px] perspective-1000 group overflow-hidden rounded-2xl ${prop.description ? 'cursor-pointer' : 'cursor-default'}`}
+      onClick={() => {
+        if (prop.description) {
+          setIsFlipped(!isFlipped);
+        }
+      }}
     >
       <motion.div
         animate={{ rotateY: isFlipped ? 180 : 0 }}
@@ -33,7 +37,7 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
                 alt={prop.title} 
                 fill 
                 unoptimized 
-                className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                className={`object-cover ${prop.description ? 'group-hover:scale-105' : ''} transition-transform duration-700`} 
               />
               <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur text-[10px] font-bold px-3 py-1.5 rounded-full text-white shadow-sm uppercase tracking-wider">
                 {typeBadge}
@@ -51,9 +55,21 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
                 <div className="font-bold text-[#905e0e] text-lg">
                   {prop.price || prop.size}
                 </div>
-                <div className="flex items-center text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-[#905e0e] transition-colors">
-                  Details <ArrowRight className="w-4 h-4 ml-1" />
-                </div>
+                {prop.description ? (
+                  <div className="flex items-center text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-[#905e0e] transition-colors">
+                    Inquiry <ArrowRight className="w-4 h-4 ml-1" />
+                  </div>
+                ) : (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onInquire(prop);
+                    }}
+                    className="flex items-center text-xs font-bold text-white bg-[#905e0e] px-4 py-2 rounded-lg uppercase tracking-widest hover:bg-[#7a4f0c] transition-colors"
+                  >
+                    Inquiry <ArrowRight className="w-4 h-4 ml-1" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -63,7 +79,7 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
         <div className="absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-2xl overflow-hidden bg-white shadow-2xl p-8 border border-slate-100">
           <div className="flex flex-col h-full relative">
             <div className="absolute top-0 right-0 text-[#905e0e] text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">
-              Description
+              Inquiry
             </div>
 
             <h3 className="text-2xl font-serif font-bold mb-6 text-slate-900 leading-snug">{prop.title}</h3>

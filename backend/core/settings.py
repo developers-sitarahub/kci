@@ -31,7 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'unfold',
+    'unfold.contrib.filters',
+    'unfold.contrib.forms',
+    'unfold.contrib.inlines',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,7 +65,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,59 +119,193 @@ LANGUAGE_CODE = 'en-us'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Jazzmin settings
-JAZZMIN_SETTINGS = {
-    "site_title": "Kanji Capital Admin",
-    "site_header": "Kanji Capital",
-    "site_brand": "Kanji Capital",
-    "welcome_sign": "Welcome to the Kanji Capital Admin",
-    "copyright": "Kanji Capital Ltd",
-    "show_ui_builder": False,
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "api.Property": "fas fa-building",
-        "api.Inquiry": "fas fa-envelope-open-text",
-        "api.Contact": "fas fa-address-book",
-        "api.CareerApplication": "fas fa-briefcase",
-        "api.InvestedProject": "fas fa-chart-pie",
-        "api.Newsletter": "fas fa-mail-bulk",
+# Unfold settings
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+
+
+UNFOLD = {
+    "SITE_TITLE": "Kanji Capital Admin",
+    "SITE_HEADER": "",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "account_balance",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "STYLES": [
+        lambda request: static("css/admin_custom.css"),
+    ],
+    "SITE_LOGO": {
+        "light": lambda request: static("images/logo.jpg"),
+        "dark": lambda request: static("images/logo.jpg"),
+    },
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/jpeg",
+            "href": lambda request: static("images/logo.jpg"),
+        },
+    ],
+    "COLORS": {
+        "primary": {
+            "50": "250 249 248",
+            "100": "245 241 238",
+            "200": "235 227 218",
+            "300": "223 209 194",
+            "400": "194 169 144",
+            "500": "176 148 120",
+            "600": "158 126 95",
+            "700": "135 106 80",
+            "800": "110 87 67",
+            "900": "89 71 56",
+            "950": "46 36 29",
+        },
+    },
+    "LOGIN": {
+        "redirect_after": "/",
+    },
+    "TABS": [
+        {
+            "models": ["api.property"],
+            "items": [
+                {
+                    "title": "All Properties",
+                    "link": reverse_lazy("admin:api_property_changelist"),
+                },
+            ],
+        },
+        {
+            "models": ["api.careerapplication"],
+            "items": [
+                {
+                    "title": "All Applications",
+                    "link": reverse_lazy("admin:api_careerapplication_changelist"),
+                },
+            ],
+        },
+    ],
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": "Main",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Dashboard",
+                        "icon": "speed",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": "Website Content",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Site Statistics",
+                        "icon": "analytics",
+                        "link": reverse_lazy("admin:api_sitestatistic_changelist"),
+                    },
+                    {
+                        "title": "Tenants",
+                        "icon": "group",
+                        "link": reverse_lazy("admin:api_tenant_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "Real Estate",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Properties",
+                        "icon": "apartment",
+                        "link": reverse_lazy("admin:api_property_changelist"),
+                        "badge": "core.badges.property_count",
+                    },
+                    {
+                        "title": "Invested Projects",
+                        "icon": "trending_up",
+                        "link": reverse_lazy("admin:api_investedproject_changelist"),
+                        "badge": "core.badges.invested_project_count",
+                    },
+                ],
+            },
+            {
+                "title": "Customer Relations",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Contacts",
+                        "icon": "person_search",
+                        "link": reverse_lazy("admin:api_contact_changelist"),
+                        "badge": "core.badges.contact_count",
+                    },
+                    {
+                        "title": "Inquiries",
+                        "icon": "quiz",
+                        "link": reverse_lazy("admin:api_inquiry_changelist"),
+                        "badge": "core.badges.inquiry_count",
+                    },
+                    {
+                        "title": "Newsletters",
+                        "icon": "newspaper",
+                        "link": reverse_lazy("admin:api_newsletter_changelist"),
+                        "badge": "core.badges.newsletter_count",
+                    },
+                ],
+            },
+            {
+                "title": "Recruitment",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Career Applications",
+                        "icon": "work_history",
+                        "link": reverse_lazy("admin:api_careerapplication_changelist"),
+                        "badge": "core.badges.career_application_count",
+                    },
+                ],
+            },
+            {
+                "title": "Access Control",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Users",
+                        "icon": "manage_accounts",
+                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "badge": "core.badges.user_count",
+                    },
+                    {
+                        "title": "Groups",
+                        "icon": "shield_person",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+        ],
     },
 }
+import os
 
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-dark",
-    "accent": "accent-primary",
-    "navbar": "navbar-dark",
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "darkly",
-    "dark_mode_theme": "darkly",
-    "button_classes": {
-        "primary": "btn-outline-primary",
-        "secondary": "btn-outline-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
-    }
-}
+# Email Notification Settings
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@kanjicapitalinvestments.com')
+NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'anil@kanjicapitalinvestments.com')
+
+# Use python-dotenv if available to load .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass

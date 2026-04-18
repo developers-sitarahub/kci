@@ -1,11 +1,33 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, CheckCircle2, X, Building, MapPin, Leaf, Navigation } from "lucide-react";
 
 export default function AboutPage() {
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/web-services/tenants/')
+      .then(res => res.json())
+      .then(data => setTenants(data))
+      .catch(err => console.error("Error fetching tenants:", err));
+
+    fetch('http://127.0.0.1:8000/web-services/site-stats/')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error("Error fetching site stats:", err));
+  }, []);
+
+  const iconMap: { [key: string]: any } = {
+    Building: Building,
+    MapPin: MapPin,
+    Leaf: Leaf,
+    Navigation: Navigation
+  };
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
@@ -159,6 +181,34 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Stats Bar */}
+      {stats.length > 0 && (
+        <section className="bg-white py-12 border-y border-slate-100">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:divide-x lg:divide-slate-100">
+              {stats.map((stat, i) => {
+                const IconComponent = iconMap[stat.icon] || Building;
+                return (
+                  <motion.div 
+                    key={stat.label} 
+                    custom={i} 
+                    initial="hidden" 
+                    whileInView="visible" 
+                    viewport={{ once: true }} 
+                    variants={fadeInUp}
+                    className="flex flex-col items-center justify-center text-center px-4"
+                  >
+                    <IconComponent size={28} className="text-[#905e0e] mb-4" strokeWidth={1.5} />
+                    <span className="text-3xl md:text-5xl font-serif font-bold text-slate-900 mb-2 truncate max-w-full">{stat.value}</span>
+                    <span className="text-[10px] md:text-xs text-slate-400 uppercase tracking-[0.2em] font-bold">{stat.label}</span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Gallery Section */}
       <section className="py-12 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
@@ -213,16 +263,79 @@ export default function AboutPage() {
                 Get in Touch
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
-              <Link
-                href="/tenants"
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-slate-900 transition-all duration-200 bg-white border border-transparent rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-slate-900 w-full sm:w-auto hover:-translate-y-1 shadow-lg"
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-slate-900 transition-all duration-200 bg-white border border-transparent rounded-full hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-slate-900 w-full sm:w-auto hover:-translate-y-1 shadow-lg cursor-pointer"
               >
                 Our Tenants
-              </Link>
+              </button>
             </div>
           </motion.div>
         </div>
       </section>
+
+      {/* Tenants Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                <div>
+                  <h2 className="text-2xl font-serif font-bold text-slate-900">Our Valued Tenants</h2>
+                  <p className="text-sm text-slate-500">Trusted partners of Kanji Capital Investments</p>
+                </div>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500 hover:text-slate-900"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8">
+                  {tenants.map((t, i) => (
+                    <motion.div
+                      key={t.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center aspect-square group hover:shadow-md transition-shadow duration-300"
+                    >
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={t.logo}
+                          alt={t.name}
+                          fill
+                          className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500"
+                          unoptimized
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                  {tenants.length === 0 && (
+                    <div className="col-span-full py-20 text-center">
+                      <p className="text-slate-400 font-medium">No tenants listed at this time.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
