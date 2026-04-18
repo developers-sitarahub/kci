@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, ArrowRight, Building, Leaf, Navigation } from 'lucide-react';
+import { MapPin, ArrowRight, Building, Leaf, Navigation, X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fadeUp: any = {
@@ -14,12 +15,26 @@ const fadeUp: any = {
 
 export default function ProjectsInvestedIn() {
   const [properties, setProperties] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const iconMap: { [key: string]: any } = {
+    Building: Building,
+    MapPin: MapPin,
+    Leaf: Leaf,
+    Navigation: Navigation
+  };
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/invested-projects/')
+    fetch('http://127.0.0.1:8000/web-services/invested-projects/')
       .then(res => res.json())
       .then(data => setProperties(data))
       .catch(err => console.error("Error fetching invested projects:", err));
+
+    fetch('http://127.0.0.1:8000/web-services/site-stats/')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error("Error fetching site stats:", err));
   }, []);
 
   return (
@@ -58,7 +73,17 @@ export default function ProjectsInvestedIn() {
       <section className="bg-[#FAF8F4] py-8 border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 divide-x divide-gray-200/50">
-            {[
+            {stats.length > 0 ? stats.map((stat, i) => {
+              const IconComponent = iconMap[stat.icon] || Building;
+              return (
+                <motion.div key={stat.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                  className="flex flex-col items-center justify-center text-center px-4">
+                  <IconComponent size={20} className="text-[#9c7c3d] mb-2" />
+                  <span className="text-2xl md:text-3xl font-cardo font-bold text-gray-900">{stat.value}</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-widest mt-1">{stat.label}</span>
+                </motion.div>
+              );
+            }) : [
               { label: 'Total Projects', value: '12+', icon: Building },
               { label: 'Communities', value: '5+', icon: MapPin },
               { label: 'Asset Types', value: '4', icon: Leaf },
@@ -89,7 +114,10 @@ export default function ProjectsInvestedIn() {
                 variants={fadeUp}
                 className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100"
               >
-                <div className="relative w-full aspect-[4/3] overflow-hidden">
+                <div 
+                  className="relative w-full aspect-[4/3] overflow-hidden cursor-zoom-in"
+                  onClick={() => setSelectedImage(p.image || "/images/building_1.png")}
+                >
                   <Image
                     src={p.image || "/images/building_1.png"}
                     alt={p.title}
@@ -121,6 +149,41 @@ export default function ProjectsInvestedIn() {
           </div>
         </div>
       </section>
+
+      {/* ── LIGHTBOX ── */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-10"
+            onClick={() => setSelectedImage(null)}
+          >
+            <button 
+              className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X size={32} />
+            </button>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image 
+                src={selectedImage}
+                alt="Full size project view"
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── CTA ── */}
       <section className="py-20 px-6 bg-white">

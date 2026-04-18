@@ -24,7 +24,7 @@ export default function InquiryModal({ isOpen, onClose, propertyTitle, propertyA
     e.preventDefault();
     setStatus('loading');
     try {
-      const res = await fetch('http://localhost:8000/api/inquiries/', {
+      const res = await fetch('http://127.0.0.1:8000/web-services/inquiries/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

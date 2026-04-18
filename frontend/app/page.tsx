@@ -1,9 +1,11 @@
 'use client';
 
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Phone, MapPin, Mail, ArrowRight, ChevronDown, TrendingUp, PieChart, RefreshCcw, Building2, UserCog, FileText, History } from "lucide-react";
+import { Phone, MapPin, Mail, ArrowRight, ChevronDown, TrendingUp, PieChart, RefreshCcw, Building2, UserCog, FileText, History, Building, Leaf, Navigation } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fadeUp: any = {
@@ -11,20 +13,33 @@ const fadeUp: any = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.65, delay: i * 0.12 } }),
 };
 
-const tenants = [
-  { name: "CBD American Shaman", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-7-1.png" },
-  { name: "Tropical Smoothie Cafe", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-6-1.png" },
-  { name: "Jersey Mike's", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-5-1.png" },
-  { name: "Shipley Do-Nuts", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-4-1.png" },
-  { name: "Rock N Roll Sushi", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-3-1.png" },
-  { name: "Dental Domain", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-2-1.png" },
-  { name: "Main Street Pharmacy", src: "https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-1-2.png" },
-];
+
 
 export default function Home() {
+  const [stats, setStats] = useState<any[]>([]);
+  const [tenants, setTenants] = useState<any[]>([]);
+
+  const iconMap: { [key: string]: any } = {
+    Building: Building,
+    MapPin: MapPin,
+    Leaf: Leaf,
+    Navigation: Navigation
+  };
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/web-services/site-stats/')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error("Error fetching site stats:", err));
+
+    fetch('http://127.0.0.1:8000/web-services/tenants/')
+      .then(res => res.json())
+      .then(data => setTenants(data))
+      .catch(err => console.error("Error fetching tenants:", err));
+  }, []);
+
   return (
     <main className="flex flex-col flex-1 bg-white">
-
       {/* ── HERO ── */}
       <section className="relative w-full min-h-[88vh] flex items-center justify-center overflow-hidden">
         <Image
@@ -92,6 +107,27 @@ export default function Home() {
         </motion.div>
       </section>
 
+      {/* ── STATS BAR ── */}
+      {stats.length > 0 && (
+        <section className="bg-white py-12 border-y border-gray-100">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 divide-x divide-gray-100">
+              {stats.map((stat, i) => {
+                const IconComponent = iconMap[stat.icon] || Building;
+                return (
+                  <motion.div key={stat.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                    className="flex flex-col items-center justify-center text-center">
+                    <IconComponent size={28} className="text-[#9c7c3d] mb-4" strokeWidth={1.5} />
+                    <span className="text-3xl md:text-5xl font-cardo font-bold text-gray-900 mb-2 truncate max-w-full px-2">{stat.value}</span>
+                    <span className="text-[10px] md:text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">{stat.label}</span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── OUR TENANTS ── */}
       <section className="py-20 px-6 bg-white border-t border-gray-100">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
@@ -102,7 +138,7 @@ export default function Home() {
           {/* Mobile & Tablet Grid */}
           <div className="flex min-[1367px]:hidden flex-wrap justify-center items-center gap-x-4 gap-y-8 sm:gap-10 px-2 lg:px-8">
             {tenants.map((t, i) => (
-              <motion.div key={`${t.name}-mob`} custom={i} 
+              <motion.div key={`${t.id}-mob`} custom={i} 
                 initial={{ opacity: 0, y: 30, filter: 'grayscale(100%)' }}
                 whileInView={{ 
                   opacity: 1, 
@@ -116,7 +152,7 @@ export default function Home() {
                 }}
                 viewport={{ once: true }}
                 className="relative w-[42%] h-28 sm:w-[30%] sm:h-36 md:w-[28%] md:h-44 lg:h-48 flex items-center justify-center">
-                <Image src={t.src} alt={t.name} fill className="object-contain" sizes="(max-width: 1366px) 300px, 0px" unoptimized />
+                <Image src={t.logo} alt={t.name} fill className="object-contain" sizes="(max-width: 1366px) 300px, 0px" unoptimized />
               </motion.div>
             ))}
           </div>
@@ -124,7 +160,7 @@ export default function Home() {
           {/* Desktop Display */}
           <div className="hidden min-[1367px]:flex flex-nowrap justify-center items-center gap-8">
             {tenants.map((t, i) => (
-              <motion.div key={`${t.name}-desk`} custom={i} 
+              <motion.div key={`${t.id}-desk`} custom={i} 
                 initial={{ opacity: 0, y: 30, filter: 'grayscale(100%)' }}
                 whileInView={{ 
                   opacity: 1, 
@@ -137,8 +173,8 @@ export default function Home() {
                   }
                 }}
                 viewport={{ once: true }}
-                className="relative w-auto h-[220px] xl:h-[280px] flex-1 flex items-center justify-center transition-transform duration-500 hover:scale-105">
-                <Image src={t.src} alt={t.name} fill className="object-contain" sizes="300px" unoptimized />
+                className="relative w-auto h-[220px] xl:h-[280px] flex-1 flex items-center justify-center transition-transform duration(500) hover:scale-105">
+                <Image src={t.logo} alt={t.name} fill className="object-contain" sizes="300px" unoptimized />
               </motion.div>
             ))}
           </div>

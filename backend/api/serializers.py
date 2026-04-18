@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contact, CareerApplication, Property, Inquiry, InvestedProject, Newsletter
+from .models import Contact, CareerApplication, Property, Inquiry, InvestedProject, Newsletter, SiteStatistic, Tenant
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,4 +29,14 @@ class InvestedProjectSerializer(serializers.ModelSerializer):
 class NewsletterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Newsletter
+        fields = '__all__'
+
+class SiteStatisticSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteStatistic
+        fields = '__all__'
+
+class TenantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tenant
         fields = '__all__'

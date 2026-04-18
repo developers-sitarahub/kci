@@ -51,10 +51,10 @@ export default function Properties() {
             <Link href="/for-lease" className="group flex flex-col bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl border border-gray-100 transition-all duration-500 hover:-translate-y-2 h-full">
               <div className="relative w-full aspect-[4/3] overflow-hidden">
                 <Image 
-                  src="https://kanjicapitalinvestments.com/wp-content/uploads/2024/05/dbn-d-1-2.png" 
+                  src="https://kanjicapitalinvestments.com/wp-content/uploads/2025/01/kanji-capitlal-jk1b.png" 
                   alt="Property For Lease" 
                   fill 
-                  className="object-contain p-12 bg-gray-50 group-hover:scale-105 transition-transform duration-700" 
+                  className="object-cover group-hover:scale-105 transition-transform duration-700" 
                   unoptimized 
                 />
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />

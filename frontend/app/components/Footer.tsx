@@ -15,7 +15,7 @@ export default function Footer() {
 
     setStatus('loading');
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/newsletter/', {
+      const response = await fetch('http://127.0.0.1:8000/web-services/newsletter/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,6 +92,7 @@ export default function Footer() {
                 width={160}
                 height={50}
                 unoptimized
+                style={{ height: 'auto' }}
               />
             </Link>
             <p className="font-bold text-gray-900 text-sm mt-1">Kanji Capital Investments</p>

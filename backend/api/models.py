@@ -5,9 +5,15 @@ class Contact(models.Model):
     email = models.EmailField()
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
 
 class CareerApplication(models.Model):
     name = models.CharField(max_length=255)
@@ -16,9 +22,15 @@ class CareerApplication(models.Model):
     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
 
 class Property(models.Model):
     TYPE_CHOICES = (
@@ -34,7 +46,7 @@ class Property(models.Model):
     address = models.CharField(max_length=255)
     price = models.CharField(max_length=100, blank=True, null=True)
     size = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='properties/', blank=True, null=True)
     property_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='ACTIVE')
@@ -55,9 +67,15 @@ class Inquiry(models.Model):
     phone = models.CharField(max_length=50)
     message = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Inquiry from {self.name} about {self.property_title}"
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Inquiries"
@@ -76,6 +94,40 @@ class InvestedProject(models.Model):
 class Newsletter(models.Model):
     email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
+
+class SiteStatistic(models.Model):
+    label = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    icon = models.CharField(max_length=50, help_text="Lucide icon name (Building, MapPin, Leaf, Navigation)")
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.label
+
+    class Meta:
+        ordering = ['order']
+
+class Tenant(models.Model):
+    name = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='tenants/')
+    order = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['order']
