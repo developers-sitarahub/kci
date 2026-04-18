@@ -152,10 +152,15 @@ class PropertyAdmin(ModelAdmin):
     ordering = ("-created_at",)
     date_hierarchy = "created_at"
     list_editable = ()
+    save_as_continue = False
 
     fieldsets = (
         ("General Information", {
-            "fields": (("title", "property_type", "status"), ("price", "size")),
+            "fields": (
+                ("title", "property_type", "status"),
+                ("price_currency", "price"),
+                ("size_unit", "size")
+            ),
             "classes": ["tab"],
             "description": "Core property details – type, pricing, and current status.",
         }),
@@ -188,7 +193,8 @@ class PropertyAdmin(ModelAdmin):
     def display_price(self, obj):
         if not obj.price:
             return "—"
-        return f"₹ {obj.price}"
+        symbol = "₹" if obj.price_currency == "INR" else "$"
+        return f"{symbol} {obj.price}"
 
     @display(description="Listed On")
     def display_created(self, obj):

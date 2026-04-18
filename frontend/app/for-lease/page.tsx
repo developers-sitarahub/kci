@@ -119,7 +119,9 @@ export default function ForLeasePage() {
                       </h3>
                     </div>
                     <p className="text-sm font-medium text-[#905e0e] mb-3">
-                      {prop.size || prop.price}
+                      {prop.price && `${prop.price_currency === 'INR' ? '₹' : '$'} ${prop.price}`}
+                      {prop.price && prop.size && ' · '}
+                      {prop.size && `${prop.size} ${prop.size_unit === 'ACRE' ? 'Acres' : prop.size_unit === 'SQM' ? 'Sq. M.' : 'Sq. Ft.'}`}
                     </p>
                     <div className="flex items-start gap-2 text-slate-500 text-sm">
                       <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />

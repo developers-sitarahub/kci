@@ -52,8 +52,17 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
               </div>
               
               <div className="flex justify-between items-center pt-6 border-t border-slate-100 mt-auto">
-                <div className="font-bold text-[#905e0e] text-lg">
-                  {prop.price || prop.size}
+                <div className="font-bold text-[#905e0e] text-lg flex flex-col items-start gap-1">
+                  {prop.price && (
+                    <span>
+                      {prop.price_currency === 'INR' ? '₹' : '$'} {prop.price}
+                    </span>
+                  )}
+                  {prop.size && (
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">
+                      {prop.size} {prop.size_unit === 'ACRE' ? 'Acres' : prop.size_unit === 'SQM' ? 'Sq. M.' : 'Sq. Ft.'}
+                    </span>
+                  )}
                 </div>
                 {prop.description ? (
                   <div className="flex items-center text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-[#905e0e] transition-colors">
@@ -91,18 +100,18 @@ export default function PropertyCard({ prop, onInquire, typeBadge }: PropertyCar
               </p>
 
               <div className="grid grid-cols-2 gap-4 mt-auto">
-                {prop.size && (
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Area</h4>
-                    <p className="text-slate-900 text-xs font-bold">{prop.size}</p>
+                    <p className="text-slate-900 text-xs font-bold">
+                        {prop.size} {prop.size_unit === 'ACRE' ? 'Acres' : prop.size_unit === 'SQM' ? 'Sq. M.' : 'Sq. Ft.'}
+                    </p>
                   </div>
-                )}
-                {prop.price && (
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Price</h4>
-                    <p className="text-[#905e0e] text-xs font-bold">{prop.price}</p>
+                    <p className="text-[#905e0e] text-xs font-bold">
+                        {prop.price_currency === 'INR' ? '₹' : '$'} {prop.price}
+                    </p>
                   </div>
-                )}
               </div>
             </div>
 

@@ -42,10 +42,21 @@ class Property(models.Model):
         ('SOLD', 'Sold'),
         ('LEASED', 'Leased')
     )
+    CURRENCY_CHOICES = (
+        ('INR', 'Rupees (₹)'),
+        ('USD', 'Dollars ($)')
+    )
+    UNIT_CHOICES = (
+        ('SQFT', 'Sq. Ft.'),
+        ('SQM', 'Sq. M.'),
+        ('ACRE', 'Acres')
+    )
     title = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
+    price_currency = models.CharField(max_length=10, choices=CURRENCY_CHOICES, default='INR')
     price = models.CharField(max_length=100, blank=True, null=True)
     size = models.CharField(max_length=100, blank=True, null=True)
+    size_unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='SQFT')
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='properties/', blank=True, null=True)
     property_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
