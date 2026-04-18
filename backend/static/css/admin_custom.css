@@ -4,10 +4,10 @@
 
 /* ---------- Sidebar Logo – Big & Prominent ---------- */
 /* Target the logo in the sidebar header area */
-aside a > img,
+aside a>img,
 aside header img,
-aside [class*="flex"] > a > img,
-nav a > img[src*="logo"],
+aside [class*="flex"]>a>img,
+nav a>img[src*="logo"],
 .lg\:w-72 a img,
 .w-72 a img,
 [class*="sidebar"] a img[src*="logo"] {
@@ -21,7 +21,7 @@ nav a > img[src*="logo"],
 }
 
 /* Make the sidebar logo container wider */
-aside > div:first-child,
+aside>div:first-child,
 aside header,
 aside [class*="flex"]:first-child {
     padding: 16px 12px !important;
@@ -49,7 +49,7 @@ form img[src*="logo"],
 /* ---------- Page Header / Breadcrumbs ---------- */
 header h1,
 [class*="header"] h1,
-.breadcrumbs + h1 {
+.breadcrumbs+h1 {
     font-size: 1.5rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.01em;
@@ -89,11 +89,19 @@ aside [class*="separator"],
 }
 
 /* Force header and body to be table groups */
-.changelist-items thead, #result_list thead { display: table-header-group !important; }
-.changelist-items tbody, #result_list tbody { display: table-row-group !important; }
+.changelist-items thead,
+#result_list thead {
+    display: table-header-group !important;
+}
+
+.changelist-items tbody,
+#result_list tbody {
+    display: table-row-group !important;
+}
 
 /* Force rows to be table-rows */
-.changelist-items tr, #result_list tr {
+.changelist-items tr,
+#result_list tr {
     display: table-row !important;
     background: transparent !important;
 }
@@ -109,7 +117,8 @@ aside [class*="separator"],
     text-align: left !important;
     white-space: nowrap !important;
     border-bottom: 1px solid rgba(194, 169, 144, 0.1) !important;
-    width: auto !important; /* Let browser decide proportional width */
+    width: auto !important;
+    /* Let browser decide proportional width */
 }
 
 /* Specific width for the checkbox column */
@@ -202,7 +211,8 @@ select:focus {
     padding: 8px 20px !important;
     border-radius: 8px 8px 0 0 !important;
     transition: all 0.15s ease !important;
-    cursor: pointer !important; /* Force pointer cursor */
+    cursor: pointer !important;
+    /* Force pointer cursor */
 }
 
 /* Ensure active tab doesn't show cancel sign */
@@ -342,6 +352,7 @@ main,
         opacity: 0;
         transform: translateY(6px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -369,7 +380,7 @@ footer {
 /* ---------- User Avatar / Profile at Bottom ---------- */
 aside [class*="bottom"],
 aside footer,
-aside > div:last-child {
+aside>div:last-child {
     border-top: 1px solid rgba(194, 169, 144, 0.1) !important;
 }
 
@@ -384,14 +395,15 @@ aside > div:last-child {
 
 /* ---------- Responsive Adjustments ---------- */
 @media (max-width: 1024px) {
-    aside a > img,
+
+    aside a>img,
     aside header img,
     [class*="sidebar"] a img[src*="logo"] {
         max-height: 48px !important;
         height: 48px !important;
     }
 
-    aside > div:first-child,
+    aside>div:first-child,
     aside header {
         min-height: 64px !important;
         padding: 10px 8px !important;
@@ -408,8 +420,10 @@ aside span:empty {
 
 /* Base styling for badges (using a vibrant but professional gold/pink tone) */
 aside [class*="badge"] {
-    background-color: #fce7f3 !important; /* Soft Pink background */
-    color: #9d174d !important; /* Deep Pink text */
+    background-color: #fce7f3 !important;
+    /* Soft Pink background */
+    color: #9d174d !important;
+    /* Deep Pink text */
     padding: 2px 8px !important;
     border-radius: 6px !important;
     font-size: 0.65rem !important;
@@ -435,20 +449,6 @@ aside::-webkit-scrollbar-thumb,
 aside::-webkit-scrollbar-track,
 [class*="sidebar"]::-webkit-scrollbar-track {
     background: transparent;
-}
-
-/* ---------- Streamline Save Actions ---------- */
-/* Hide 'Save and add another' and 'Save and continue editing' buttons for a cleaner UI */
-input[name="_addanother"],
-button[name="_addanother"],
-input[name="_continue"],
-button[name="_continue"],
-.submit-row input[name="_addanother"],
-.submit-row button[name="_addanother"],
-.submit-row input[name="_continue"],
-.submit-row button[name="_continue"],
-.submit-row button:not([name="_save"]) {
-    display: none !important;
 }
 
 /* Ensure the primary Save button is prominent */
