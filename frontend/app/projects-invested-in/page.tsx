@@ -137,10 +137,12 @@ export default function ProjectsInvestedIn() {
 
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-[#9c7c3d] transition-colors leading-snug">{p.title}</h3>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-auto">
-                    <MapPin size={12} className="text-[#9c7c3d]" />
-                    {p.location}
-                  </div>
+                  {p.location && (
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-auto">
+                      <MapPin size={12} className="text-[#9c7c3d]" />
+                      {p.location}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
