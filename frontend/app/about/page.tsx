@@ -216,18 +216,18 @@ export default function AboutPage() {
           <div className="w-16 h-1 bg-[#c2a990] mt-4 rounded-full" />
         </div>
         <div className="flex flex-nowrap overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar pl-4 sm:pl-6 lg:pl-8 gap-6 max-w-[100vw]">
-          {[1, 2, 3].map((num) => (
+          {['/images/about-1.png', '/images/building_2.png', '/images/about-3.jpg'].map((src, index) => (
             <motion.div
-              key={num}
+              key={index}
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: num * 0.1, duration: 0.5 }}
+              transition={{ delay: (index + 1) * 0.1, duration: 0.5 }}
               className="relative flex-none w-[80vw] sm:w-[50vw] lg:w-[30vw] aspect-[3/4] snap-center rounded-xl overflow-hidden shadow-lg group"
             >
               <Image
-                src={`/images/building_${num}.png`}
-                alt={`Real Estate Gallery ${num}`}
+                src={src}
+                alt={`Real Estate Gallery ${index + 1}`}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-700"
               />
